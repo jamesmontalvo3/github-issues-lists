@@ -9,36 +9,67 @@
   <style>
   #wrapper {
   	margin: 20px auto 10px auto;
-    width: 1024px;
+  	width: auto;
+    /*width: 1024px;*/
   }
-  #wrapper div {
+  #wrapper div.list-container {
   	margin: 0;
   	float: left;
   	padding: 0;
-  	width: 33%;
+  	width: 300px;
   }
-  #sortable1, #sortable2, #sortable3 {
+  .add-new {
+  	margin: 10px;
+  	float: left;
+  	padding: 0;
+  	width: 100px;
+  }
+  .sortable-list {
   	list-style-type: none;
   	background: #eee;
   	min-height: 50px;
   	margin: 5px;
   	padding: 5px;
   }
-  #sortable1 li, #sortable2 li, #sortable3 li { margin: 5px; padding: 5px; font-size: 1.2em; background-color: yellow; }
-  #sortable1 li a, #sortable2 li a, #sortable3 li a { font-weight: bold; }
+  .title-box {
+  	width: 90%;
+  }
+  .sortable-list li { margin: 5px; padding: 5px; font-size: 1.2em; background-color: yellow; }
+  .sortable-list li a { font-weight: bold; }
   </style>
   <script>
-  $(function() {
-    $( "ul.droptrue" ).sortable({
+
+  function addColumn () {
+  	var index = $(".sortable-list").size();
+	$("#end-of-lists").before(
+		"<div class='list-container'><input type='text' class='title-box' /><ul id='sortable" + index + "' class='droptrue sortable-list'></ul></div>"
+	);
+    $( "#sortable" + index ).disableSelection().sortable({
       connectWith: "ul"
     });
+  }
 
-    $( "ul.dropfalse" ).sortable({
-      connectWith: "ul",
-      dropOnEmpty: false
-    });
+  $(function() {
+  	var cols = 3;
+	for( var i = 0; i < cols; i++ ) {
+		addColumn();
+		// $("#end-of-lists").before(
+		// 	"<div><ul id='sortable" + i + "' class='droptrue sortable-list'></ul></div>"
+		// );
+	}
 
-    $( "#sortable1, #sortable2, #sortable3" ).disableSelection();
+	// $("#wrapper").append('<br id="end-of-lists" style="clear:both">');
+
+	// var widthPercent = parseInt( 100 / cols );
+
+	//$(".sortable-list").parent().css( {"width": widthPercent } );
+
+    // $( ".sortable-list" ).disableSelection().sortable({
+    //   connectWith: "ul"
+    // });
+
+  	$("#add-column").click( addColumn );
+
   });
 
   $.getJSON(
@@ -48,7 +79,7 @@
   		for( var i in issues ) {
   			var issue = issues[i];
 
-  			$("#sortable1").append(
+  			$("#sortable0").append(
   				"<li class='ui-state-default'><a href='" + issue.html_url + "'>#" + issue.number + "</a> " + issue.title + "</li>");
   		}
   	}
@@ -57,24 +88,10 @@
 </head>
 <body>
 
-<div id="wrapper">
-
-	<div>
-	<ul id="sortable1" class="droptrue">
-	</ul>
+	<div id="add-new"><button id="add-column">Add column</button></div>
+	<div id="wrapper">
+		<br id="end-of-lists" style="clear:both">
 	</div>
-
-	<div>
-	<ul id="sortable2" class="droptrue">
-	</ul>
-	</div>
-
-	<div>
-	<ul id="sortable3" class="droptrue">
-	</ul>
-	</div>
-	<br style="clear:both">
-</div>
 
 </body>
 </html>
