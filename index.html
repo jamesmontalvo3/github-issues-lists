@@ -13,10 +13,11 @@
     /*width: 1024px;*/
   }
   #wrapper div.list-container {
-  	margin: 0;
+  	margin: 5px;
   	float: left;
   	padding: 0;
   	width: 300px;
+  	background: #eee;
   }
   .add-new {
   	margin: 10px;
@@ -26,13 +27,18 @@
   }
   .sortable-list {
   	list-style-type: none;
-  	background: #eee;
   	min-height: 50px;
-  	margin: 5px;
+  	margin: 0;
   	padding: 5px;
+  }
+
+  .title-wrapper {
+  	text-align: center;
   }
   .title-box {
   	width: 90%;
+  	margin: 10px 0 0 0;
+  	font-size: 20px;
   }
   .sortable-list li { margin: 5px; padding: 5px; font-size: 1.2em; background-color: yellow; }
   .sortable-list li a { font-weight: bold; }
@@ -42,7 +48,7 @@
   function addColumn () {
   	var index = $(".sortable-list").size();
 	$("#end-of-lists").before(
-		"<div class='list-container'><input type='text' class='title-box' /><ul id='sortable" + index + "' class='droptrue sortable-list'></ul></div>"
+		"<div class='list-container'><div class='title-wrapper'><input type='text' class='title-box' /></div><ul id='sortable" + index + "' class='droptrue sortable-list'></ul></div>"
 	);
     $( "#sortable" + index ).disableSelection().sortable({
       connectWith: "ul"
@@ -68,7 +74,7 @@
     //   connectWith: "ul"
     // });
 
-  	$("#add-column").click( addColumn );
+  	$("#add-column").button().click( addColumn );
 
   });
 
