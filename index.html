@@ -48,6 +48,25 @@
   </style>
   <script>
 
+  function getIssues () {
+  	var milestoneNum = $("#milestone").val();
+
+	$.getJSON(
+		"https://api.github.com/repos/enterprisemediawiki/meza/issues?milestone=" + milestoneNum,
+		{},
+		function( issues ) {
+			resetColumns();
+
+			for( var i in issues ) {
+				var issue = issues[i];
+
+				$("#sortable0").append(
+					"<li class='ui-state-default'><a href='" + issue.html_url + "'>#" + issue.number + "</a> " + issue.title + "</li>");
+			}
+		}
+	);
+  }
+
   function addColumn () {
   	var index = $(".sortable-list").size();
 	// $("#end-of-lists").before(
@@ -59,7 +78,9 @@
     });
   }
 
-  $(function() {
+  function resetColumns() {
+  	$(".list-container").remove();
+
   	var cols = 3;
 	for( var i = 0; i < cols; i++ ) {
 		addColumn();
@@ -78,28 +99,40 @@
     //   connectWith: "ul"
     // });
 
+  }
+
+  // setup
+  $(function(){
   	$("#add-column").button({
   		icons: { primary: "ui-icon-plusthick" },
   		text: false
   	}).click( addColumn );
 
+  	$("#get-issues").button().click( getIssues );
+
+	$.getJSON(
+		"https://api.github.com/repos/enterprisemediawiki/meza/milestones",
+		{},
+		function( milestones ) {
+			for( var i in milestones ) {
+				var ms = milestones[i];
+
+				$("#milestone").append(
+					"<option value='" + ms.number + "'>" + ms.title + "</option>"
+				);
+			}
+		}
+	);
+
   });
 
-  $.getJSON(
-  	"https://api.github.com/repos/enterprisemediawiki/meza/issues?milestone=9",
-  	{},
-  	function( issues ) {
-  		for( var i in issues ) {
-  			var issue = issues[i];
 
-  			$("#sortable0").append(
-  				"<li class='ui-state-default'><a href='" + issue.html_url + "'>#" + issue.number + "</a> " + issue.title + "</li>");
-  		}
-  	}
-  );
   </script>
 </head>
 <body>
+	<div>
+		Pick Milestone: <select id="milestone"></select> <button id="get-issues">Go</button>
+	</div>
 
 	<div id="wrapper">
 		<div id="add-new"><button id="add-column"></button></div>
