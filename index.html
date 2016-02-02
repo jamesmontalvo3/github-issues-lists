@@ -20,10 +20,13 @@
   	background: #eee;
   }
   .add-new {
-  	margin: 10px;
   	float: left;
-  	padding: 0;
-  	width: 100px;
+  }
+  #add-column {
+  	margin: 5px;
+  	width: auto;
+  	height: 20px;
+  	font-size: 30px;
   }
   .sortable-list {
   	list-style-type: none;
@@ -47,7 +50,8 @@
 
   function addColumn () {
   	var index = $(".sortable-list").size();
-	$("#end-of-lists").before(
+	// $("#end-of-lists").before(
+	$("#add-new").before(
 		"<div class='list-container'><div class='title-wrapper'><input type='text' class='title-box' /></div><ul id='sortable" + index + "' class='droptrue sortable-list'></ul></div>"
 	);
     $( "#sortable" + index ).disableSelection().sortable({
@@ -74,7 +78,10 @@
     //   connectWith: "ul"
     // });
 
-  	$("#add-column").button().click( addColumn );
+  	$("#add-column").button({
+  		icons: { primary: "ui-icon-plusthick" },
+  		text: false
+  	}).click( addColumn );
 
   });
 
@@ -94,8 +101,8 @@
 </head>
 <body>
 
-	<div id="add-new"><button id="add-column">Add column</button></div>
 	<div id="wrapper">
+		<div id="add-new"><button id="add-column"></button></div>
 		<br id="end-of-lists" style="clear:both">
 	</div>
 
