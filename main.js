@@ -75,6 +75,16 @@ function getColumnsFromQueryString () {
 	return output;
 }
 
+function getTitleStringFromQueryString () {
+	var titles = $.QueryString['titles'];
+	if ( ! titles ) {
+		return '';
+	}
+	else {
+		return decodeURIComponent( titles );
+	}
+}
+
 function getIssues () {
 	var milestoneNum = $("#milestone").val();
 
@@ -98,12 +108,21 @@ function getIssues () {
 	);
 }
 
+function getColumnTitle ( index ) {
+	var qs = $.QueryString['titles'];
+	if ( ! qs ) {
+		return '';
+	}
+	return qs.split(";")[index];
+}
+
 function addColumn ( fillToIndex ) {
 
 	var newIndex = $(".sortable-list").size();
+	var columnTitle = getColumnTitle( newIndex );
 
 	$("#add-new").before(
-		"<div class='list-container'><div class='title-wrapper'><input type='text' class='title-box' /></div><ul id='sortable" + newIndex + "' column-num='" + newIndex + "' class='droptrue sortable-list'></ul></div>"
+		"<div class='list-container'><div class='title-wrapper'><input type='text' class='title-box' value='" + columnTitle + "' /></div><ul id='sortable" + newIndex + "' column-num='" + newIndex + "' class='droptrue sortable-list'></ul></div>"
 	);
 
 	$( "#sortable" + newIndex ).disableSelection().sortable({
@@ -114,20 +133,35 @@ function addColumn ( fillToIndex ) {
 		}
 	});
 
+	$( "#sortable" + newIndex ).parent().find( ".title-box" ).change( function() {
+		updateURI();
+	})
+
 	if ( fillToIndex && newIndex < fillToIndex ) {
 		addColumn( fillToIndex );
 	}
 }
 
 function updateURI () {
-	var uriString = '';
+	var columnsString = '';
 	$(".sortable-list li").each( function( i, e ) {
 		var $e = $(e);
 		var id = $e.attr( 'github-id' );
 		var col = $e.parent().attr( 'column-num' );
-		uriString += id + ":" + col + ";";
+		columnsString += id + ":" + col + ";";
 	});
-	window.history.pushState("some object", "some title", location.pathname + "?columns=" + uriString);
+	titlesString = constructTitlesString();
+	window.history.pushState("some object", "some title", location.pathname + "?columns=" + columnsString + "&titles=" + titlesString);
+}
+
+function constructTitlesString () {
+	var titlesString = '';
+	$(".title-box").each( function( i, e ) {
+		titlesString += $(e).val() + ";";
+	});
+	localStorage.setItem( "titles", titlesString );
+	titlesString = encodeURIComponent( titlesString );
+	return titlesString;
 }
 
 function resetColumns() {
@@ -136,35 +170,9 @@ function resetColumns() {
 	var cols = 3;
 	for( var i = 0; i < cols; i++ ) {
 		addColumn();
-		// $("#end-of-lists").before(
-		// 	"<div><ul id='sortable" + i + "' class='droptrue sortable-list'></ul></div>"
-		// );
 	}
 
-	// $("#wrapper").append('<br id="end-of-lists" style="clear:both">');
-
-	// var widthPercent = parseInt( 100 / cols );
-
-	//$(".sortable-list").parent().css( {"width": widthPercent } );
-
-	// $( ".sortable-list" ).disableSelection().sortable({
-	//	 connectWith: "ul"
-	// });
-
 }
-
-// Taken from http://stackoverflow.com/questions/5999118/add-or-update-query-string-parameter
-// Thanks!
-// function updateQueryStringParameter(uri, key, value) {
-// 	var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-// 	var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-// 	if (uri.match(re)) {
-// 		return uri.replace(re, '$1' + key + "=" + value + '$2');
-// 	}
-// 	else {
-// 		return uri + separator + key + "=" + value;
-// 	}
-// }
 
 // setup
 $(function(){
@@ -180,6 +188,9 @@ $(function(){
 	for ( var id in presets ) {
 		setColumnFromId( id, presets[id] );
 	}
+
+	var titlesString = getTitleStringFromQueryString();
+	localStorage.setItem( "titles", titlesString );
 
 
 	$.getJSON(
