@@ -6,128 +6,8 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <style>
-  #wrapper {
-  	margin: 20px auto 10px auto;
-  	width: auto;
-    /*width: 1024px;*/
-  }
-  #wrapper div.list-container {
-  	margin: 5px;
-  	float: left;
-  	padding: 0;
-  	width: 300px;
-  	background: #eee;
-  }
-  .add-new {
-  	float: left;
-  }
-  #add-column {
-  	margin: 5px;
-  	width: auto;
-  	height: 20px;
-  	font-size: 30px;
-  }
-  .sortable-list {
-  	list-style-type: none;
-  	min-height: 50px;
-  	margin: 0;
-  	padding: 5px;
-  }
-
-  .title-wrapper {
-  	text-align: center;
-  }
-  .title-box {
-  	width: 90%;
-  	margin: 10px 0 0 0;
-  	font-size: 20px;
-  }
-  .sortable-list li { margin: 5px; padding: 5px; font-size: 1.2em; background-color: yellow; }
-  .sortable-list li a { font-weight: bold; }
-  </style>
-  <script>
-
-  function getIssues () {
-  	var milestoneNum = $("#milestone").val();
-
-	$.getJSON(
-		"https://api.github.com/repos/enterprisemediawiki/meza/issues?milestone=" + milestoneNum,
-		{},
-		function( issues ) {
-			resetColumns();
-
-			for( var i in issues ) {
-				var issue = issues[i];
-
-				$("#sortable0").append(
-					"<li class='ui-state-default'><a href='" + issue.html_url + "'>#" + issue.number + "</a> " + issue.title + "</li>");
-			}
-		}
-	);
-  }
-
-  function addColumn () {
-  	var index = $(".sortable-list").size();
-	// $("#end-of-lists").before(
-	$("#add-new").before(
-		"<div class='list-container'><div class='title-wrapper'><input type='text' class='title-box' /></div><ul id='sortable" + index + "' class='droptrue sortable-list'></ul></div>"
-	);
-    $( "#sortable" + index ).disableSelection().sortable({
-      connectWith: "ul"
-    });
-  }
-
-  function resetColumns() {
-  	$(".list-container").remove();
-
-  	var cols = 3;
-	for( var i = 0; i < cols; i++ ) {
-		addColumn();
-		// $("#end-of-lists").before(
-		// 	"<div><ul id='sortable" + i + "' class='droptrue sortable-list'></ul></div>"
-		// );
-	}
-
-	// $("#wrapper").append('<br id="end-of-lists" style="clear:both">');
-
-	// var widthPercent = parseInt( 100 / cols );
-
-	//$(".sortable-list").parent().css( {"width": widthPercent } );
-
-    // $( ".sortable-list" ).disableSelection().sortable({
-    //   connectWith: "ul"
-    // });
-
-  }
-
-  // setup
-  $(function(){
-  	$("#add-column").button({
-  		icons: { primary: "ui-icon-plusthick" },
-  		text: false
-  	}).click( addColumn );
-
-  	$("#get-issues").button().click( getIssues );
-
-	$.getJSON(
-		"https://api.github.com/repos/enterprisemediawiki/meza/milestones",
-		{},
-		function( milestones ) {
-			for( var i in milestones ) {
-				var ms = milestones[i];
-
-				$("#milestone").append(
-					"<option value='" + ms.number + "'>" + ms.title + "</option>"
-				);
-			}
-		}
-	);
-
-  });
-
-
-  </script>
+  <link rel="stylesheet" href="main.css">
+  <script type="text/javascript" src="main.js"></script>
 </head>
 <body>
 	<div>
@@ -138,6 +18,5 @@
 		<div id="add-new"><button id="add-column"></button></div>
 		<br id="end-of-lists" style="clear:both">
 	</div>
-
 </body>
 </html>
