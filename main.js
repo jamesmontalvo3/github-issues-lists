@@ -183,6 +183,15 @@ $(function(){
 
 	$("#get-issues").button().click( getIssues );
 
+	$("#delete-untitled").button().click( function() {
+		$(".list-container").each( function(i,e){
+			if( $(e).find(".title-box").first().val().trim() === "" ) {
+				$(e).remove();
+			}
+		});
+	});
+
+
 	// preset IDs to certain columns per query string
 	var presets = getColumnsFromQueryString();
 	for ( var id in presets ) {
